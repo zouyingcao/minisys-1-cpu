@@ -1,23 +1,23 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 module minisys(prst,pclk,led2N4,switch2N4);
-    input prst;               //°åÉÏµÄResetĞÅºÅ£¬µÍµçÆ½¸´Î»
-    input pclk;               //°åÉÏµÄ100MHzÊ±ÖÓĞÅºÅ
-    input[23:0] switch2N4;    //²¦Âë¿ª¹ØÊäÈë
-    output[23:0] led2N4;      //led½á¹ûÊä³öµ½Nexys4ÊıÂë¹Ü
+    input prst;               //æ¿ä¸Šçš„Resetä¿¡å·ï¼Œä½ç”µå¹³å¤ä½
+    input pclk;               //æ¿ä¸Šçš„100MHzæ—¶é’Ÿä¿¡å·
+    input[23:0] switch2N4;    //æ‹¨ç å¼€å…³è¾“å…¥
+    output[23:0] led2N4;      //ledç»“æœè¾“å‡ºåˆ°Nexys4æ•°ç ç®¡
     
-    wire clock;              //clock: ·ÖÆµºóÊ±ÖÓ¹©¸øÏµÍ³
-    wire iowrite,ioread;     //I/O¶ÁĞ´ĞÅºÅ
-    wire[31:0] write_data;   //Ğ´RAM»òIOµÄÊı¾İ
-    wire[31:0] read_data;        //¶ÁRAM»òIOµÄÊı¾İ
-    wire[15:0] ioread_data;  //¶ÁIOµÄÊı¾İ
+    wire clock;              //clock: åˆ†é¢‘åæ—¶é’Ÿä¾›ç»™ç³»ç»Ÿ
+    wire iowrite,ioread;     //I/Oè¯»å†™ä¿¡å·
+    wire[31:0] write_data;   //å†™RAMæˆ–IOçš„æ•°æ®
+    wire[31:0] read_data;        //è¯»RAMæˆ–IOçš„æ•°æ®
+    wire[15:0] ioread_data;  //è¯»IOçš„æ•°æ®
     wire[31:0] pc_plus_4;    //PC+4
-    wire[31:0] read_data_1;  //ÒëÂëµ¥Ôª¶Á³öµÄÊı¾İ1
-    wire[31:0] read_data_2;  //ÒëÂëµ¥Ôª¶Á³öµÄÊı¾İ2
-    wire[31:0] sign_extend;  //·ûºÅÀ©Õ¹
+    wire[31:0] read_data_1;  //è¯‘ç å•å…ƒè¯»å‡ºçš„æ•°æ®1
+    wire[31:0] read_data_2;  //è¯‘ç å•å…ƒè¯»å‡ºçš„æ•°æ®2
+    wire[31:0] sign_extend;  //ç¬¦å·æ‰©å±•
     wire[31:0] add_result;   //
     wire[31:0] alu_result;   //
-    wire[31:0] mread_data;    //RAMÖĞ¶ÁÈ¡µÄÊı¾İ
+    wire[31:0] mread_data;    //RAMä¸­è¯»å–çš„æ•°æ®
     wire[31:0] address;
     wire alusrc;
     wire branch;
@@ -61,7 +61,7 @@ module minisys(prst,pclk,led2N4,switch2N4);
         .read_data_1(read_data_1),
         .read_data_2(read_data_2),
         .Instruction(instruction),
-        .read_data(read_data),////´ÓDATA RAM or I/O portÈ¡³öµÄÊı¾İ
+        .read_data(read_data),////ä»DATA RAM or I/O portå–å‡ºçš„æ•°æ®
         .ALU_result(alu_result),
         .Jal(jal),
         .RegWrite(regwrite),
@@ -113,7 +113,7 @@ module minisys(prst,pclk,led2N4,switch2N4);
        .PC_plus_4(pc_plus_4)
      );
     
-    memorio memio(//IO MEMÍ³Ò»±àÖ·
+    memorio memio(//IO MEMç»Ÿä¸€ç¼–å€
         .caddress(alu_result),// from alu_result in executs32
         .address(address),//output, address to DMEM
         .memread(memread),// read memory, from control32
@@ -123,14 +123,14 @@ module minisys(prst,pclk,led2N4,switch2N4);
         .mread_data(mread_data),// data from memory
         .ioread_data(ioread_data),// data from io
         .wdata(read_data_2),// the data from idecode32,that want to write memory or io
-        .rdata(read_data),// ouput,mread_dataÓëioread_dataÑ¡ÆäÒ»
-        .write_data(write_data),// output,data to memory or I/O£¬wdata£¨memwrite||iowriteÓĞĞ§£©
+        .rdata(read_data),// ouput,mread_dataä¸ioread_dataé€‰å…¶ä¸€
+        .write_data(write_data),// output,data to memory or I/Oï¼Œwdataï¼ˆmemwrite||iowriteæœ‰æ•ˆï¼‰
         .LEDCtrl(ledctrl),
         .SwitchCtrl(switchctrl)
     );
     
-    dmemory32 memory(                   //Êı¾İRAM
-      .read_data(mread_data),           //RAM¶Á³ö
+    dmemory32 memory(                   //æ•°æ®RAM
+      .read_data(mread_data),           //RAMè¯»å‡º
       .address(address),
       .write_data(write_data),
       .Memwrite(memwrite),
