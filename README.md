@@ -10,3 +10,4 @@ All Verilog files are in .srcs folder：
     ioread.v IO
     led.v LED_IO
     switch.v switch_IO
+    
