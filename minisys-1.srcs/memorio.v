@@ -20,8 +20,8 @@ module memorio(caddress,address,memread,memwrite,ioread,iowrite,mread_data,iorea
     wire iorw;
     
     assign  address = caddress;
-    assign  rdata = (memread==1) ? mread_data : {16'h0000,ioread_data[15:0]};   // ´æ´¢Æ÷¶Á/ÁãÀ©Õ¹IO
-    assign  iorw = (iowrite||ioread);  // IO²Ù×÷
+    assign  rdata = (memread==1) ? mread_data : {16'h0000,ioread_data[15:0]};   // Â´Ã¦Â´Â¢Ã†Ã·Â¶Ã/ÃÃ£Ã€Â©Ã•Â¹IO
+    assign  iorw = (iowrite||ioread);  // IOÂ²Ã™Ã—Ã·
     assign  LEDCtrl = ((iorw==1) && (caddress[31:0] == 32'hFFFFFC60)) ? 1'b1:1'b0;
     assign  SwitchCtrl = ((iorw==1) && (caddress[31:0] == 32'hFFFFFC70)) ? 1'b1:1'b0;
     
