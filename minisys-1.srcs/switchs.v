@@ -6,7 +6,7 @@ module switchs(switclk,switrst,switchread,switchaddr,switchcs,switchrdata,switch
     input switchcs,switchread;
     input[1:0] switchaddr;
     output [15:0] switchrdata;
-    //²¦Âë¿ª¹ØÊäÈë
+    //æ‹¨ç å¼€å…³è¾“å…¥
     input [23:0] switch_i;
 
     reg [23:0] switchrdata;
@@ -16,7 +16,7 @@ module switchs(switclk,switrst,switchread,switchaddr,switchcs,switchrdata,switch
         else if(switchcs&&switchread) begin
             if(switchaddr==2'b00)  
                 switchrdata[15:0]=switch_i;
-            else if(switchaddr==2'b10) // 0xFFFFC62,24Î»Êı¾İµÄ¸ß8Î»Êı¾İ¶ÔÓ¦ºìÉ«µÄRLD
+            else if(switchaddr==2'b10) // 0xFFFFC62,24ä½æ•°æ®çš„é«˜8ä½æ•°æ®å¯¹åº”çº¢è‰²çš„RLD
                 switchrdata[15:0]={8'd0,switch_i[23:16]};
         end    
     end
