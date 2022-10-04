@@ -9,15 +9,15 @@ module Executs32(Read_data_1,Read_data_2,Sign_extend,Function_opcode,Exe_opcode,
     input[31:0]  Sign_extend;		// i-form
     input[5:0]   Function_opcode;  	// r-form instructions[5..0]
     input[5:0]   Exe_opcode;  		// op code
-    input[1:0]   ALUOp;             // lw,sw:00;beq,bne:01;RÐÍ,I-format:10
+    input[1:0]   ALUOp;             // lw,sw:00;beq,bne:01;Råž‹,I-format:10
     input[4:0]   Shamt;             // instruction[10:6]
     input  		 Sftmd;
     input        ALUSrc;
     input        I_format;
-    output       Zero;              // Îª1±íÊ¾¼ÆËãÖµÎª0
+    output       Zero;              // ä¸º1è¡¨ç¤ºè®¡ç®—å€¼ä¸º0
     output[31:0] ALU_Result;
-    output[31:0] Add_Result;		// pc op  ¼ÆËãµÄµØÖ·½á¹û PC+4+(Sign-Extend)offset<<2
-    input[31:0]  PC_plus_4;         // À´×ÔÈ¡Öµµ¥ÔªµÄPC+4
+    output[31:0] Add_Result;		// pc op  è®¡ç®—çš„åœ°å€ç»“æžœ PC+4+(Sign-Extend)offset<<2
+    input[31:0]  PC_plus_4;         // æ¥è‡ªå–å€¼å•å…ƒçš„PC+4
     
     reg[31:0] ALU_Result;
     wire[31:0] Ainput,Binput;
@@ -29,15 +29,15 @@ module Executs32(Read_data_1,Read_data_2,Sign_extend,Function_opcode,Exe_opcode,
     wire[2:0] Sftm;
     wire Sftmd;
     
-    assign Sftm = Function_opcode[2:0];   // Êµ¼ÊÓÐÓÃµÄÖ»ÓÐµÍÈýÎ»(ÒÆÎ»Ö¸Áî£©
+    assign Sftm = Function_opcode[2:0];   // å®žé™…æœ‰ç”¨çš„åªæœ‰ä½Žä¸‰ä½(ç§»ä½æŒ‡ä»¤ï¼‰
     assign Exe_code = (I_format==0) ? Function_opcode : {3'b000,Exe_opcode[2:0]};
     assign Ainput = Read_data_1;
-    assign Binput = (ALUSrc == 0) ? Read_data_2 : Sign_extend[31:0]; // R/LW,SW  sft  elseµÄÊ±ºòº¬LWºÍSW
+    assign Binput = (ALUSrc == 0) ? Read_data_2 : Sign_extend[31:0]; // R/LW,SW  sft  elseçš„æ—¶å€™å«LWå’ŒSW
     assign ALU_ctl[0] = (Exe_code[0] | Exe_code[3]) & ALUOp[1];      // 24H AND 
     assign ALU_ctl[1] = ((!Exe_code[2]) | (!ALUOp[1]));
     assign ALU_ctl[2] = (Exe_code[1] & ALUOp[1]) | ALUOp[0];
 
-    always @* begin  // 6ÖÖÒÆÎ»Ö¸Áî
+    always @* begin  // 6ç§ç§»ä½æŒ‡ä»¤
        if(Sftmd)
         case(Sftm[2:0])
             3'b000:Sinput = Binput<<Shamt;      // Sll rd,rt,shamt  00000
@@ -52,16 +52,16 @@ module Executs32(Read_data_1,Read_data_2,Sign_extend,Function_opcode,Exe_opcode,
     end
  
     always @* begin
-        if(((ALU_ctl[2:1]==2'b11) && (I_format==1))||((ALU_ctl==3'b111) && (Exe_code[3]==1))) // ËùÓÐSLTÀà
-            ALU_Result = {31'd0,ALU_output_mux[31]};    // ·ûºÅÎ»Îª1ËµÃ÷(rs)<(rt)
+        if(((ALU_ctl[2:1]==2'b11) && (I_format==1))||((ALU_ctl==3'b111) && (Exe_code[3]==1))) // æ‰€æœ‰SLTç±»
+            ALU_Result = {31'd0,ALU_output_mux[31]};    // ç¬¦å·ä½ä¸º1è¯´æ˜Ž(rs)<(rt)
         else if((ALU_ctl==3'b101) && (I_format==1))     // lui
             ALU_Result[31:0] = {Binput,16'd0};          
-        else if(Sftmd==1) ALU_Result = Sinput;          // ÒÆÎ»
+        else if(Sftmd==1) ALU_Result = Sinput;          // ç§»ä½
         else  ALU_Result = ALU_output_mux[31:0];        // otherwise
     end
  
-    assign Branch_Add = PC_plus_4[31:2] + Sign_extend[31:0];    // sign_extendÎ´×óÒÆ2Î»
-    assign Add_Result = Branch_Add[31:0];               // Ëã³öµÄÏÂÒ»¸öPCÖµÒÑ¾­×öÁË³ý4´¦Àí£¬ËùÒÔ²»Ðè×óÒÆ16Î»
+    assign Branch_Add = PC_plus_4[31:2] + Sign_extend[31:0];    // sign_extendæœªå·¦ç§»2ä½
+    assign Add_Result = Branch_Add[31:0];               // ç®—å‡ºçš„ä¸‹ä¸€ä¸ªPCå€¼å·²ç»åšäº†é™¤4å¤„ç†ï¼Œæ‰€ä»¥ä¸éœ€å·¦ç§»16ä½
     assign Zero = (ALU_output_mux[31:0]== 32'h00000000) ? 1'b1 : 1'b0;
     
     always @(ALU_ctl or Ainput or Binput) begin
